@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>anna.andriievska.design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    /* ── Tokens ── */
+    :root {
+      --accent:       #E8521A;
+      --accent-light: #F06830;
+      --accent-dim:   rgba(232,82,26,.11);
+
+      --bg:           #FFFFFF;
+      --bg-secondary: #F5F4F2;
+      --bg-card:      #FAFAF9;
+      --border:       rgba(0,0,0,.08);
+      --text-primary: #0D0D0D;
+      --text-secondary:#6B6B6B;
+      --text-muted:   #ABABAB;
+      --shadow-sm:    0 2px 8px rgba(0,0,0,.06);
+      --shadow-md:    0 8px 32px rgba(0,0,0,.10);
+      --shadow-lg:    0 24px 64px rgba(0,0,0,.14);
+      --radius-sm:    8px;
+      --radius-md:    16px;
+      --radius-lg:    24px;
+      --transition:   .35s cubic-bezier(.4,0,.2,1);
+    }
+
+    [data-theme="dark"] {
+      --bg:           #0A0A0A;
+      --bg-secondary: #111111;
+      --bg-card:      #161616;
+      --border:       rgba(255,255,255,.08);
+      --text-primary: #F0F0F0;
+      --text-secondary:#888888;
+      --text-muted:   #555555;
+      --shadow-sm:    0 2px 8px rgba(0,0,0,.3);
+      --shadow-md:    0 8px 32px rgba(0,0,0,.4);
+      --shadow-lg:    0 24px 64px rgba(0,0,0,.6);
+      --accent-dim:   rgba(255,85,0,.15);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      transition: background var(--transition), color var(--transition);
+      overflow-x: hidden;
+    }
+
+    /* ── Utilities ── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+    .sr-only { position: absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+
+    /* ── Scroll reveal via IntersectionObserver ── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s cubic-bezier(.4,0,.2,1), transform .7s cubic-bezier(.4,0,.2,1); }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+    /* Fallback: if JS disabled, show everything */
+    .no-js .reveal { opacity: 1; transform: none; }
+
+    /* ═══════════════════════════════ HEADER ═══════════════════════════════ */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 40px;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg);
+      border-bottom: 1px solid transparent;
+      transition: background var(--transition), border-color var(--transition), backdrop-filter var(--transition);
+    }
+    header.scrolled {
+      border-color: var(--border);
+      backdrop-filter: blur(20px) saturate(1.4);
+      background: color-mix(in srgb, var(--bg) 80%, transparent);
+    }
+
+    .logo {
+      font-size: .875rem;
+      font-weight: 600;
+      letter-spacing: -.01em;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .logo span { color: var(--accent); }
+
+    nav { display: flex; align-items: center; gap: 32px; }
+    nav a {
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      letter-spacing: .01em;
+      transition: color var(--transition);
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute; bottom: -3px; left: 0; right: 0;
+      height: 1.5px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--transition);
+    }
+    nav a:hover { color: var(--text-primary); }
+    nav a:hover::after { transform: scaleX(1); }
+
+    .header-right { display: flex; align-items: center; gap: 16px; }
+
+    /* Dark mode toggle */
+    .theme-toggle {
+      width: 44px; height: 24px;
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      position: relative;
+      transition: background var(--transition);
+      flex-shrink: 0;
+    }
+    .theme-toggle::after {
+      content: '';
+      position: absolute; top: 2px; left: 2px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      transition: transform var(--transition), background var(--transition);
+    }
+    [data-theme="dark"] .theme-toggle::after {
+      transform: translateX(20px);
+      background: var(--accent);
+    }
+    [data-theme="dark"] .theme-toggle { background: #222; }
+
+    .theme-icon {
+      position: absolute;
+      font-size: 10px;
+      top: 50%; transform: translateY(-50%);
+      transition: opacity .2s;
+      pointer-events: none;
+    }
+    .icon-sun { right: 5px; opacity: 1; color: var(--text-secondary); }
+    .icon-moon { left: 5px; opacity: 0; color: #fff; }
+    [data-theme="dark"] .icon-sun { opacity: 0; }
+    [data-theme="dark"] .icon-moon { opacity: 1; }
+
+    /* ═══════════════════════════════ HERO ═══════════════════════════════ */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 120px 40px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 70% at 80% 40%, var(--accent-dim) 0%, transparent 65%);
+      pointer-events: none;
+      animation: heroGlow 8s ease-in-out infinite alternate;
+    }
+    @keyframes heroGlow {
+      from { transform: scale(1) translate(0,0); }
+      to   { transform: scale(1.1) translate(-3%, 2%); }
+    }
+
+    /* Two-column grid */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    /* Right: stacked cards */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 420px;
+    }
+
+    .hero-card-stack {
+      position: relative;
+      width: 380px;
+      height: 380px;
+      animation: heroCardFloat 5s ease-in-out infinite;
+    }
+    @keyframes heroCardFloat {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-10px); }
+    }
+
+    .hero-card {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      border-radius: 20px;
+    }
+
+    .hero-card-back-left  { transform: rotate(-5deg); z-index: 1; filter: blur(6px); transition: filter 1.4s ease-in-out; }
+    .hero-card-back-right { transform: rotate(5deg);  z-index: 1; filter: blur(6px); transition: filter 1.4s ease-in-out; }
+    .hero-card-front      { transform: rotate(0deg);  z-index: 3; filter: blur(0px); }
+
+    .hero-card-img {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: opacity 1.4s ease-in-out;
+    }
+
+    /* Animated emoji — big, no frame, floats on word */
+    .hero-emoji {
+      display: inline-block;
+      font-size: 3.5rem;
+      line-height: 1;
+      vertical-align: middle;
+      margin-left: 12px;
+      position: relative;
+      top: -4px;
+      animation: emojiBounce 2.8s ease-in-out infinite;
+      cursor: default;
+      user-select: none;
+    }
+    @keyframes emojiBounce {
+      0%, 100% { transform: translateY(0) rotate(-4deg) scale(1); }
+      35%       { transform: translateY(-10px) rotate(5deg) scale(1.08); }
+      65%       { transform: translateY(-4px) rotate(-2deg) scale(1.03); }
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .8125rem;
+      font-weight: 400;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp .7s cubic-bezier(.4,0,.2,1) .2s forwards;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 24px; height: 1.5px;
+      background: var(--accent);
+    }
+
+    .hero-headline {
+      font-size: clamp(2.25rem, 4.2vw, 3.75rem);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -.04em;
+      color: var(--text-primary);
+      max-width: 680px;
+      opacity: 0;
+      animation: fadeUp .8s cubic-bezier(.4,0,.2,1) .35s forwards;
+    }
+    .hero-headline em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      margin-top: 28px;
+      font-size: 1.125rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      max-width: 520px;
+      opacity: 0;
+      animation: fadeUp .8s cubic-bezier(.4,0,.2,1) .5s forwards;
+    }
+
+    .hero-actions {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      margin-top: 48px;
+      opacity: 0;
+      animation: fadeUp .8s cubic-bezier(.4,0,.2,1) .65s forwards;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: #fff;
+      font-size: .9375rem;
+      font-weight: 600;
+      border-radius: 100px;
+      text-decoration: none;
+      border: none; cursor: pointer;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      box-shadow: 0 4px 20px rgba(255,85,0,.35);
+    }
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(255,85,0,.45);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px;
+      background: transparent;
+      color: var(--text-primary);
+      font-size: .9375rem;
+      font-weight: 600;
+      border-radius: 100px;
+      text-decoration: none;
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      transition: border-color var(--transition), color var(--transition), transform var(--transition);
+    }
+    .btn-secondary:hover {
+      border-color: var(--text-primary);
+      transform: translateY(-2px);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 40px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      opacity: 0;
+      animation: fadeIn 1s .9s forwards;
+    }
+    .scroll-line {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, transparent, var(--text-muted));
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity: .4; transform: scaleY(1); }
+      50%      { opacity: 1;  transform: scaleY(.7); }
+    }
+    .scroll-label {
+      font-size: .6875rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: none; }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    /* ═══════════════════════════════ ABOUT ═══════════════════════════════ */
+    #about {
+      padding: 140px 0;
+      background: var(--bg-secondary);
+    }
+
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .75rem;
+      font-weight: 400;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .section-label::before {
+      content: '';
+      width: 20px; height: 1.5px;
+      background: var(--accent);
+    }
+
+    .section-heading {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: -.03em;
+      line-height: 1.12;
+      color: var(--text-primary);
+      margin-bottom: 48px;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .about-bio p {
+      font-size: 1.0625rem;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin-bottom: 20px;
+    }
+    .about-bio p:last-child { margin-bottom: 0; }
+
+    .skills-list {
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .skill-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-item:first-child { border-top: 1px solid var(--border); }
+    .skill-name {
+      font-size: .9375rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .skill-level {
+      font-size: .8125rem;
+      font-weight: 500;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+
+    /* ═══════════════════════════════ WORK ═══════════════════════════════ */
+    #work { padding: 140px 0; }
+
+    .work-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 64px;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .project-card {
+      border-radius: 20px;
+      overflow: hidden;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      position: relative;
+      transition: transform .4s cubic-bezier(.4,0,.2,1), box-shadow .4s cubic-bezier(.4,0,.2,1), border-color .4s;
+    }
+    .project-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(232,82,26,.2);
+    }
+
+    .project-card-image {
+      width: 100%;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      position: relative;
+    }
+    .project-card-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .6s cubic-bezier(.4,0,.2,1);
+    }
+    .project-card:hover .project-card-image img { transform: scale(1.04); }
+
+    .project-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.4) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .project-card:hover .project-card-overlay { opacity: 1; }
+
+    .card-open-hint {
+      position: absolute; bottom: 10px; right: 10px;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: scale(.8);
+      transition: opacity var(--transition), transform var(--transition);
+    }
+    .project-card:hover .card-open-hint { opacity: 1; transform: scale(1); }
+    .card-open-hint svg { width: 12px; height: 12px; }
+
+    .project-card-body { padding: 12px 14px 14px; }
+    .project-tag {
+      display: inline-block;
+      font-size: .5625rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 3px;
+    }
+    .project-title {
+      font-size: .875rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+      line-height: 1.3;
+    }
+    .project-desc {
+      font-size: .75rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .project-card-skeleton { cursor: default; }
+    .project-card-skeleton:hover { transform: none; box-shadow: none; border-color: var(--border); }
+
+    /* NBS card cover */
+    .nbs-cover {
+      width: 100%; height: 100%;
+      background: #08080f;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nbs-cover-text {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 800;
+      letter-spacing: .25em;
+      color: #6366F1;
+      text-transform: uppercase;
+      display: block;
+    }
+
+    .project-domain {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 8px;
+      font-size: .625rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* ═══════════════════════════════ GALLERY ═══════════════════════════════ */
+    #gallery {
+      padding: 140px 0;
+      background: var(--bg-secondary);
+      overflow: hidden;
+    }
+
+    .gallery-header { margin-bottom: 56px; }
+
+    .gallery-ticker {
+      display: flex; gap: 20px;
+      animation: tickerMove 28s linear infinite;
+      width: max-content;
+    }
+    .gallery-ticker:hover { animation-play-state: paused; }
+    .gallery-item-img:hover ~ * { animation-play-state: paused; }
+    .gallery-track {
+      overflow: visible;
+      mask-image: none;
+    }
+
+    @keyframes tickerMove {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .gallery-row { display: flex; gap: 20px; margin-bottom: 20px; }
+    .gallery-row:nth-child(2) .gallery-ticker { animation-direction: reverse; }
+
+    .gallery-item {
+      flex-shrink: 0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+    }
+    .gallery-item.tall  { width: 280px; height: 380px; }
+    .gallery-item.wide  { width: 420px; height: 280px; }
+    .gallery-item.sq    { width: 300px; height: 300px; }
+
+    /* Skeleton shimmer */
+    .skeleton {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .skeleton::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        color-mix(in srgb, var(--text-primary) 4%, transparent) 50%,
+        transparent 100%
+      );
+      animation: shimmer 2s ease-in-out infinite;
+      background-size: 200% 100%;
+    }
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
+    }
+
+    .gallery-item-img {
+      position: relative;
+    }
+    .gallery-item {
+      transition: transform .45s cubic-bezier(.34,1.15,.64,1);
+      z-index: 1;
+      cursor: pointer;
+    }
+    .gallery-item:hover {
+      transform: scale(1.7);
+      z-index: 10;
+    }
+    .gallery-item-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: inherit;
+    }
+    .gallery-item-img::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 60%;
+      background: linear-gradient(to top, rgba(0,0,0,.55) 0%, transparent 100%);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+    .gallery-item-img .skeleton-label {
+      z-index: 2;
+    }
+    .gallery-item-portrait {
+      width: auto !important;
+      height: 280px !important;
+      overflow: hidden;
+      position: relative;
+    }
+    .gallery-item-portrait img {
+      width: auto !important;
+      height: 100% !important;
+      object-fit: unset !important;
+      display: block;
+    }
+
+    .skeleton-label {
+      position: absolute; bottom: 16px; left: 16px;
+      font-size: .75rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      z-index: 1;
+    }
+
+    /* ═══════════════════════════════ CONTACT ═══════════════════════════════ */
+    #contact { padding: 140px 0; }
+
+    .contact-inner {
+      max-width: 720px;
+    }
+
+    .contact-links {
+      display: flex; flex-direction: column; gap: 0;
+      margin-top: 48px;
+    }
+    .contact-link-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: color var(--transition);
+      group: true;
+    }
+    .contact-link-item:first-child { border-top: 1px solid var(--border); }
+    .contact-link-item:hover { color: var(--accent); }
+
+    .contact-link-item:hover .contact-link-arrow {
+      transform: translate(4px, -4px);
+      color: var(--accent);
+    }
+
+    .contact-link-left { display: flex; flex-direction: column; gap: 4px; }
+    .contact-link-platform {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .contact-link-value {
+      font-size: 1.125rem;
+      font-weight: 600;
+      letter-spacing: -.02em;
+    }
+    .contact-link-arrow {
+      font-size: 1.5rem;
+      transition: transform var(--transition), color var(--transition);
+      color: var(--text-muted);
+    }
+
+    /* ═══════════════════════════════ FOOTER ═══════════════════════════════ */
+    footer {
+      padding: 32px 40px;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-text {
+      font-size: .875rem;
+      color: var(--text-muted);
+    }
+    .footer-accent { color: var(--accent); }
+
+    /* ═══════════════════════════════ MODAL ═══════════════════════════════ */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0);
+      backdrop-filter: blur(0px);
+      pointer-events: none;
+      transition: background .4s ease, backdrop-filter .4s ease;
+    }
+    .modal-overlay.open {
+      background: rgba(0,0,0,.5);
+      backdrop-filter: blur(14px);
+      pointer-events: all;
+    }
+
+    .modal {
+      position: fixed;
+      z-index: 201;
+      left: 50%;
+      top: 50%;
+      /* starts fully below viewport, slides up to center */
+      transform: translateX(-50%) translateY(calc(-50% + 100vh));
+      opacity: 0;
+      width: calc(100% - 80px);
+      max-width: 780px;
+      max-height: 88vh;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 32px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.18), 0 4px 16px rgba(0,0,0,.08);
+      transition:
+        transform .56s cubic-bezier(.22, 1, .36, 1),
+        opacity .28s ease;
+    }
+    .modal-overlay.open .modal {
+      transform: translateX(-50%) translateY(-50%);
+      opacity: 1;
+    }
+    [data-theme="dark"] .modal {
+      background: var(--bg-secondary);
+    }
+    [data-theme="dark"] .modal-footer {
+      background: var(--bg-secondary);
+    }
+
+    .modal-scroll-area {
+      overflow-y: auto;
+      flex: 1;
+      padding: 32px;
+    }
+    .modal-scroll-area::-webkit-scrollbar { width: 4px; }
+    .modal-scroll-area::-webkit-scrollbar-track { background: transparent; }
+    .modal-scroll-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* Header: title + tags */
+    .modal-header { margin-bottom: 24px; }
+    .modal-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+    .modal-meta {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .modal-tag {
+      display: inline-flex; align-items: center;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+    .modal-domain-tag {
+      display: inline-flex; align-items: center;
+      font-size: .75rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: color-mix(in srgb, var(--bg-secondary) 60%, var(--bg));
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+
+    /* Image with side padding */
+    .modal-cover {
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      border-radius: 16px;
+      margin-bottom: 28px;
+      flex-shrink: 0;
+    }
+    .modal-cover img { width:100%; height:100%; object-fit: cover; }
+
+    .modal-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 24px;
+    }
+    .modal-description {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.85;
+    }
+    .modal-description p { margin-bottom: 16px; }
+    .modal-description p:last-child { margin-bottom: 0; }
+    .modal-description h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      color: var(--text-primary);
+      margin: 28px 0 10px;
+    }
+    .modal-description h3:first-child { margin-top: 0; }
+    .modal-meta-row {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 8px;
+    }
+    .modal-meta-chip {
+      display: inline-flex; align-items: center;
+      font-size: .8125rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+
+    /* Sticky footer */
+    .modal-footer {
+      flex-shrink: 0;
+      padding: 18px 32px;
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .modal-footer-buttons {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .modal-footer-hint {
+      font-size: .8125rem;
+      color: var(--text-muted);
+    }
+    .btn-figma {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 22px;
+      background: var(--accent);
+      color: #fff;
+      font-size: .9375rem;
+      font-weight: 600;
+      border-radius: 100px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      box-shadow: 0 4px 16px rgba(255,85,0,.3);
+    }
+    .btn-figma:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255,85,0,.4);
+    }
+
+    .modal-close {
+      position: absolute; top: 20px; right: 20px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+      z-index: 10;
+    }
+    .modal-close:hover { background: var(--bg-card); transform: scale(1.1); }
+    .modal-close svg { width: 14px; height: 14px; color: var(--text-primary); }
+
+    /* ── Modal gallery ── */
+    .modal-gallery { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; }
+    .modal-gallery-row { display: flex; gap: 10px; align-items: flex-start; }
+    .modal-gallery-item {
+      flex: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .modal-gallery-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    /* Skeleton needs a fixed height since it has no image */
+    .modal-gallery-item.skeleton {
+      aspect-ratio: 16/10;
+    }
+    /* Full image without cropping */
+    .modal-gallery-item.contain img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+    }
+    /* Caption overlay */
+    .modal-gallery-caption {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.52);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      border-radius: inherit;
+      transition: opacity .4s ease;
+      pointer-events: none;
+    }
+    .modal-gallery-item:hover .modal-gallery-caption { opacity: 0; }
+    .modal-gallery-caption p {
+      font-size: .9375rem;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+      line-height: 1.55;
+      letter-spacing: -.01em;
+    }
+    .modal-gallery-item.skeleton::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        color-mix(in srgb, var(--text-primary) 4%, transparent) 50%,
+        transparent 100%
+      );
+      animation: shimmer 2s ease-in-out infinite;
+      background-size: 200% 100%;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .container { padding: 0 24px; }
+      header { padding: 0 24px; }
+      nav { display: none; }
+      #hero { padding: 100px 24px 80px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+      .hero-visual { height: 280px; }
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .projects-grid { grid-template-columns: repeat(2, 1fr); }
+      .work-header { flex-direction: column; align-items: flex-start; gap: 24px; }
+      .modal-scroll-area { padding: 24px; }
+      footer { flex-direction: column; gap: 8px; text-align: center; }
+      .modal-overlay { padding: 16px; }
+      .modal-footer { padding: 16px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+<header id="site-header">
+  <a href="#hero" class="logo">anna<span>.</span>andriievska<span>.</span>design</a>
+  <nav>
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="header-right">
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()">
+      <span class="theme-icon icon-sun">☀</span>
+      <span class="theme-icon icon-moon">🌙</span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<section id="hero">
+  <div class="container" style="position:relative; z-index:1;">
+    <div class="hero-grid">
+
+      <!-- Left: text -->
+      <div class="hero-left">
+        <p class="hero-eyebrow">Product UX/UI Designer</p>
+        <h1 class="hero-headline">
+          I design clear<br>
+          <em>digital products</em><span class="hero-emoji">🎯</span><br>
+          that are easy to use.
+        </h1>
+        <p class="hero-sub">Helping turn ideas into thoughtful interfaces and scalable design systems.</p>
+        <div class="hero-actions">
+          <a href="#work" class="btn-primary">
+            View my work
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#contact" class="btn-secondary">Get in touch</a>
+        </div>
+      </div>
+
+      <!-- Right: stacked slideshow -->
+      <div class="hero-visual">
+        <div class="hero-card-stack">
+          <div class="hero-card hero-card-front">
+            <img class="hero-card-img" src="https://i.postimg.cc/Px23wKhc/28.png" alt="" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+    <span class="scroll-label">Scroll</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ ABOUT ═══════════════════════════════ -->
+<section id="about">
+  <div class="container">
+    <p class="section-label reveal">About</p>
+    <h2 class="section-heading reveal reveal-delay-1">Design with intention.</h2>
+    <div class="about-grid">
+      <div class="about-bio reveal reveal-delay-2">
+        <p>UX/UI designer currently based in Portugal with 5 years of experience working with startups and product teams.</p>
+        <p>I focus on making complex products clear, structured, and easy to use. My work combines product thinking, design systems, and practical solutions that are realistic to build and scale.</p>
+        <p>I actively use AI tools to streamline workflows, speed up research and exploration, and leave more time for thoughtful design decisions.</p>
+        <p>Comfortable working with existing products, improving UX without breaking what already works, and quickly adapting to new teams and domains.</p>
+      </div>
+      <div class="skills-list reveal reveal-delay-3">
+        <div class="skill-item">
+          <span class="skill-name">Figma & Design Systems</span>
+          <span class="skill-level">Expert</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">UX Research & Strategy</span>
+          <span class="skill-level">Strong</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Mobile App Design (iOS)</span>
+          <span class="skill-level">Strong</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Prototyping & Interaction</span>
+          <span class="skill-level">Expert</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Design Tokens / Variables</span>
+          <span class="skill-level">Expert</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">RTL & complex layouts</span>
+          <span class="skill-level">Expert</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">AI-assisted workflows</span>
+          <span class="skill-level">Active</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ WORK ═══════════════════════════════ -->
+<section id="work">
+  <div class="container">
+    <div class="work-header">
+      <div>
+        <p class="section-label reveal">Selected Work</p>
+        <h2 class="section-heading reveal reveal-delay-1" style="margin-bottom:0;">Recent projects.</h2>
+      </div>
+    </div>
+
+    <div class="projects-grid" id="projects-grid">
+
+      <!-- Project 1 -->
+      <div class="project-card reveal reveal-delay-1" data-project="0">
+        <div class="project-card-image">
+          <img src="https://i.postimg.cc/tTMyMF61/wallet.png" alt="Fintech Wallet" loading="lazy" />
+          <div class="project-card-overlay"></div>
+          <div class="card-open-hint">
+            <svg viewBox="0 0 18 18" fill="none" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round">
+              <path d="M4 9h10M9 4l5 5-5 5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="project-card-body">
+          <span class="project-tag">UX/UI</span>
+          <h3 class="project-title">Fintech Wallet</h3>
+          <p class="project-desc">An embeddable white-label web wallet enabling secure, instant transactions between users' bank accounts and U.S. casino platforms.</p>
+          <span class="project-domain">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            Fintech
+          </span>
+        </div>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="project-card reveal reveal-delay-2" data-project="1">
+        <div class="project-card-image">
+          <img src="https://i.postimg.cc/Wbfrwyzn/Aroya.png" alt="Aroya" loading="lazy" />
+          <div class="project-card-overlay"></div>
+          <div class="card-open-hint">
+            <svg viewBox="0 0 18 18" fill="none" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round">
+              <path d="M4 9h10M9 4l5 5-5 5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="project-card-body">
+          <span class="project-tag">UX/UI</span>
+          <h3 class="project-title">Aroya — Consumer Pension App</h3>
+          <p class="project-desc">Translated a complex B2B insurance platform into a clear, approachable mobile experience for everyday users with no financial background.</p>
+          <span class="project-domain">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            FinTech · Insurance
+          </span>
+        </div>
+      </div>
+
+      <!-- Project 3 — NBS -->
+      <div class="project-card reveal reveal-delay-3" data-project="2">
+        <div class="project-card-image">
+          <div class="nbs-cover">
+            <span class="nbs-cover-text">NBS</span>
+          </div>
+          <div class="project-card-overlay"></div>
+          <div class="card-open-hint">
+            <svg viewBox="0 0 18 18" fill="none" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round">
+              <path d="M4 9h10M9 4l5 5-5 5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="project-card-body">
+          <span class="project-tag">Product UX/UI</span>
+          <h3 class="project-title">NBS — B2B & B2C E-commerce Platform</h3>
+          <p class="project-desc">NBS is a hybrid e-commerce platform built for the ultra-Orthodox community in Israel — an audience where simplicity isn't a preference, it's a necessity.</p>
+          <span class="project-domain">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            E-commerce · B2B · B2C
+          </span>
+        </div>
+      </div>
+
+      <!-- Project 4 — Real Estate -->
+      <div class="project-card reveal reveal-delay-4" data-project="3">
+        <div class="project-card-image">
+          <img src="https://i.postimg.cc/bv6H4vNM/Cover.png" alt="Smart Real Estate Platform" loading="lazy" />
+          <div class="project-card-overlay"></div>
+          <div class="card-open-hint">
+            <svg viewBox="0 0 18 18" fill="none" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round">
+              <path d="M4 9h10M9 4l5 5-5 5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="project-card-body">
+          <span class="project-tag">UX/UI</span>
+          <h3 class="project-title">Smart Real Estate Platform</h3>
+          <p class="project-desc">An AI-driven real estate platform where users can search, explore, and sell properties through a conversational chat interface.</p>
+          <span class="project-domain">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            Real Estate · PropTech
+          </span>
+        </div>
+      </div>
+
+      <!-- Project 5 — Startup -->
+      <div class="project-card reveal reveal-delay-1" data-project="4">
+        <div class="project-card-image">
+          <img src="https://i.postimg.cc/Bvt1LBJS/Cover.jpg" alt="Startup Projects" loading="lazy" />
+          <div class="project-card-overlay"></div>
+          <div class="card-open-hint">
+            <svg viewBox="0 0 18 18" fill="none" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round">
+              <path d="M4 9h10M9 4l5 5-5 5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="project-card-body">
+          <span class="project-tag">UX/UI</span>
+          <h3 class="project-title">Startup Projects</h3>
+          <p class="project-desc">A collection of early-stage startup projects focused on small sets of key screens created to communicate product ideas for investor pitches.</p>
+          <span class="project-domain">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            Fintech · Crypto · AI · HealthTech & etc.
+          </span>
+        </div>
+      </div>
+
+      <!-- Project 6 — Skeleton -->
+      <div class="project-card project-card-skeleton reveal reveal-delay-2">
+        <div class="project-card-image skeleton"></div>
+        <div class="project-card-body">
+          <span class="project-tag" style="color:var(--text-muted);">UX/UI</span>
+          <h3 class="project-title" style="color:var(--text-muted);">Coming Soon</h3>
+          <p class="project-desc" style="color:var(--text-muted);">New case study in progress.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ GALLERY ═══════════════════════════════ -->
+<section id="gallery">
+  <div class="container">
+    <div class="gallery-header reveal">
+      <p class="section-label">Visual Work</p>
+      <h2 class="section-heading reveal reveal-delay-1">Work in detail.</h2>
+    </div>
+  </div>
+
+  <!-- Row 1 — left to right -->
+  <div class="gallery-track">
+    <div class="gallery-row">
+      <div class="gallery-ticker">
+        <!-- Set A -->
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/t4B60FYw/sign-up.png" alt="Sign Up" loading="lazy" />
+          <span class="skeleton-label">Educational App</span>
+        </div>
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/LXYRCq5H/wishield.png" alt="Network Security App" loading="lazy" />
+          <span class="skeleton-label">Network Security App</span>
+        </div>
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/Vv7Sy8NK/Logistic-Platform.png" alt="Logistic Platform" loading="lazy" />
+          <span class="skeleton-label">Logistic Platform</span>
+        </div>
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/MTnhYhTy/Cover.png" alt="Road Safety Alert" loading="lazy" />
+          <span class="skeleton-label">Road Safety Alert</span>
+        </div>
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/SR4PBBvB/Desktop-5.png" alt="Client Management Portal" loading="lazy" />
+          <span class="skeleton-label">Client Management Portal</span>
+        </div>
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/tJs1SB6H/image.png" alt="WhatsApp Business Copilot" loading="lazy" />
+          <span class="skeleton-label">WhatsApp Business Copilot</span>
+        </div>
+        <div class="gallery-item gallery-item-img gallery-item-portrait">
+          <img src="https://i.postimg.cc/W3c17915/Scene-1-(Titanium-White).png" alt="Trader App" loading="lazy" />
+          <span class="skeleton-label">Trader App</span>
+        </div>
+        <div class="gallery-item sq gallery-item-img" style="width:280px; height:280px;">
+          <img src="https://i.postimg.cc/xjhTVWFW/10.png" alt="Pension Optimization" loading="lazy" />
+          <span class="skeleton-label">Pension Optimization — User Flow</span>
+        </div>
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/y80LHQFg/AI-Smart-Secutiry-Platform.png" alt="AI Smart Secutiry Platform" loading="lazy" />
+          <span class="skeleton-label">AI Smart Secutiry Platform</span>
+        </div>
+        <!-- Set B (duplicate for infinite loop) -->
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/t4B60FYw/sign-up.png" alt="Sign Up" loading="lazy" />
+          <span class="skeleton-label">Educational App</span>
+        </div>
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/LXYRCq5H/wishield.png" alt="Network Security App" loading="lazy" />
+          <span class="skeleton-label">Network Security App</span>
+        </div>
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/Vv7Sy8NK/Logistic-Platform.png" alt="Logistic Platform" loading="lazy" />
+          <span class="skeleton-label">Logistic Platform</span>
+        </div>
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/MTnhYhTy/Cover.png" alt="Road Safety Alert" loading="lazy" />
+          <span class="skeleton-label">Road Safety Alert</span>
+        </div>
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/SR4PBBvB/Desktop-5.png" alt="Client Management Portal" loading="lazy" />
+          <span class="skeleton-label">Client Management Portal</span>
+        </div>
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/tJs1SB6H/image.png" alt="WhatsApp Business Copilot" loading="lazy" />
+          <span class="skeleton-label">WhatsApp Business Copilot</span>
+        </div>
+        <div class="gallery-item gallery-item-img gallery-item-portrait">
+          <img src="https://i.postimg.cc/W3c17915/Scene-1-(Titanium-White).png" alt="Trader App" loading="lazy" />
+          <span class="skeleton-label">Trader App</span>
+        </div>
+        <div class="gallery-item sq gallery-item-img" style="width:280px; height:280px;">
+          <img src="https://i.postimg.cc/xjhTVWFW/10.png" alt="Pension Optimization" loading="lazy" />
+          <span class="skeleton-label">Pension Optimization — User Flow</span>
+        </div>
+        <div class="gallery-item wide gallery-item-img">
+          <img src="https://i.postimg.cc/y80LHQFg/AI-Smart-Secutiry-Platform.png" alt="AI Smart Secutiry Platform" loading="lazy" />
+          <span class="skeleton-label">AI Smart Secutiry Platform</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+    <p style="font-size: .875rem; font-weight: 400; color: var(--text-muted); line-height: 1.6; text-align: center; max-width: 480px;">
+      There's more where this came from. Browse the full project archive by role — each link opens a dedicated Figma file.
+    </p>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+      <a href="https://www.figma.com/design/pmJ7ymzz1JiA50teUjCNdD/UX-%7C-Projects?node-id=284-45932&t=no3WNVVpLh9tKPKO-1" target="_blank" rel="noopener" class="btn-secondary" style="font-size: .8125rem; padding: 10px 20px;">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 2A1.5 1.5 0 0 0 4 3.5v1A1.5 1.5 0 0 0 5.5 6H7V2H5.5zM7 6H5.5A1.5 1.5 0 0 0 4 7.5v1A1.5 1.5 0 0 0 5.5 10H7V6zM7 10H5.5A1.5 1.5 0 0 0 4 11.5v1A1.5 1.5 0 0 0 5.5 14H7v-4zM8 2v4h1.5A1.5 1.5 0 0 0 11 4.5v-1A1.5 1.5 0 0 0 9.5 2H8zM8 6v4a2 2 0 1 0 0-4z"/></svg>
+        UX Projects
+      </a>
+      <a href="https://www.figma.com/design/v1IJ6rXqgOLcc5oamkPG1D/UI-%7C-Projects?node-id=3-18&t=l3KuTAwjkfQdWFoS-1" target="_blank" rel="noopener" class="btn-secondary" style="font-size: .8125rem; padding: 10px 20px;">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 2A1.5 1.5 0 0 0 4 3.5v1A1.5 1.5 0 0 0 5.5 6H7V2H5.5zM7 6H5.5A1.5 1.5 0 0 0 4 7.5v1A1.5 1.5 0 0 0 5.5 10H7V6zM7 10H5.5A1.5 1.5 0 0 0 4 11.5v1A1.5 1.5 0 0 0 5.5 14H7v-4zM8 2v4h1.5A1.5 1.5 0 0 0 11 4.5v-1A1.5 1.5 0 0 0 9.5 2H8zM8 6v4a2 2 0 1 0 0-4z"/></svg>
+        UI Projects
+      </a>
+      <a href="https://www.figma.com/design/Qn5DU9lSQdTjtNWYi3Nrly/UX-UI-%7C-Projects?node-id=287-2262&t=XgWKhPUfMCjUF6Tz-1" target="_blank" rel="noopener" class="btn-secondary" style="font-size: .8125rem; padding: 10px 20px;">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 2A1.5 1.5 0 0 0 4 3.5v1A1.5 1.5 0 0 0 5.5 6H7V2H5.5zM7 6H5.5A1.5 1.5 0 0 0 4 7.5v1A1.5 1.5 0 0 0 5.5 10H7V6zM7 10H5.5A1.5 1.5 0 0 0 4 11.5v1A1.5 1.5 0 0 0 5.5 14H7v-4zM8 2v4h1.5A1.5 1.5 0 0 0 11 4.5v-1A1.5 1.5 0 0 0 9.5 2H8zM8 6v4a2 2 0 1 0 0-4z"/></svg>
+        Full Cycle UX/UI Projects
+      </a>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════ CONTACT ═══════════════════════════════ -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-inner">
+      <p class="section-label reveal">Contact</p>
+      <h2 class="section-heading reveal reveal-delay-1">Let's work<br>together.</h2>
+      <p class="reveal reveal-delay-2" style="font-size:1.0625rem; color:var(--text-secondary); line-height:1.7; max-width:480px;">
+        Open to freelance projects, full-time roles, and interesting collaborations.
+      </p>
+
+      <div class="contact-links reveal reveal-delay-3">
+        <a href="mailto:annandrievska1@gmail.com" class="contact-link-item">
+          <div class="contact-link-left">
+            <span class="contact-link-platform">Email</span>
+            <span class="contact-link-value">annandrievska1@gmail.com</span>
+          </div>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+        <a href="https://www.linkedin.com/in/anna-andriievska-217343213/" target="_blank" rel="noopener" class="contact-link-item">
+          <div class="contact-link-left">
+            <span class="contact-link-platform">LinkedIn</span>
+            <span class="contact-link-value">anna-andriievska</span>
+          </div>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+        <a href="https://www.behance.net/annaandrievska" target="_blank" rel="noopener" class="contact-link-item">
+          <div class="contact-link-left">
+            <span class="contact-link-platform">Behance</span>
+            <span class="contact-link-value">annaandrievska</span>
+          </div>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer>
+  <span class="footer-text">Designed with <span class="footer-accent">care</span> · © 2026</span>
+  <span class="footer-text">anna<span class="footer-accent">.</span>andriievska<span class="footer-accent">.</span>design</span>
+</footer>
+
+<!-- ═══════════════════════════════ MODAL ═══════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modal-close" aria-label="Close" onclick="closeModal()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M3 3l10 10M13 3L3 13"/>
+      </svg>
+    </button>
+
+    <div class="modal-scroll-area" id="modal-scroll-area">
+      <!-- 1. Title + tags -->
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title"></h2>
+        <div class="modal-meta">
+          <span class="modal-tag" id="modal-tag"></span>
+          <span class="modal-domain-tag" id="modal-domain"></span>
+        </div>
+      </div>
+
+      <!-- 2. Cover image (with side padding from scroll-area) -->
+      <div class="modal-cover">
+        <img id="modal-img" src="" alt="" />
+      </div>
+
+      <!-- 3. Description -->
+      <div class="modal-divider"></div>
+      <div class="modal-description" id="modal-description">
+        <p style="color:var(--text-muted); font-style:italic;">Full case study description coming soon.</p>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <span class="modal-footer-hint" id="modal-footer-hint">View the full design file</span>
+      <div class="modal-footer-buttons" id="modal-footer-buttons"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCRIPT ═══════════════════════════════ -->
+<script>
+  /* ── Project data ── */
+  // NBS SVG cover (dark bg + purple stretched text)
+  const nbsCover = `data:image/svg+xml;charset=utf-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750"><rect width="1200" height="750" fill="#08080f"/><text x="600" y="390" font-family="Syne,Arial,sans-serif" font-size="240" font-weight="600" fill="#6366F1" text-anchor="middle" dominant-baseline="middle" letter-spacing="40">NBS</text></svg>')}`;
+
+  const projects = [
+    {
+      tag: 'UX/UI',
+      title: 'Fintech Wallet',
+      domain: 'Fintech',
+      description: `## Project Overview\n\nThis project focused on designing a white-label mobile web wallet for the U.S. iGaming market. The product acts as a secure intermediary between users' bank accounts and casino platforms, allowing funds to be deposited, transferred during gameplay, and withdrawn through a dedicated wallet experience.\n\nUnlike a standalone application, the wallet was designed to be embedded into existing fintech and wallet ecosystems. The challenge was to create a solution that could seamlessly adapt to different products while maintaining a consistent, intuitive user experience.\n\nThe primary goal was to reduce friction around financial transactions by making deposits, transfers, and withdrawals feel simple, transparent, and trustworthy.\n\n## My Role & Contributions\n\nAs the UX/UI Designer, I was responsible for the end-to-end design process, including defining information architecture and transaction flows, designing onboarding, funding, transfer, and withdrawal experiences, creating a scalable component system built around variables and design tokens, developing a flexible visual framework that could be easily adapted to partner brands, optimizing transaction journeys to minimize user effort and confusion, and collaborating with stakeholders to balance business, compliance, and usability requirements.\n\nA significant part of the work focused on designing for adaptability. Since the product needed to integrate into multiple wallet ecosystems, the interface was intentionally built using a limited set of reusable patterns and configurable styling options.\n\n## Result\n\nThe final solution delivered a streamlined transaction experience that could be integrated into different products without requiring major redesign efforts. Key improvements included reduced complexity across critical payment flows, faster and more predictable transaction journeys, consistent user experience across different branded implementations, simplified future customization through a variable-driven design approach, and a scalable foundation that supports multiple partners and product environments.\n\nThe project successfully balanced usability, security, and flexibility while ensuring the embedded experience felt native to each host product.\n\n## What I Would Do Differently\n\nGiven more time and access to users, I would invest more heavily in usability testing around high-risk financial actions such as deposits, withdrawals, and transaction confirmations.\n\nI would also explore transaction history, spending insights, and trust-building features in greater depth to better support user confidence and financial transparency over time.`,
+      image: 'https://i.postimg.cc/tTMyMF61/wallet.png',
+      link: 'https://www.figma.com/design/GS2zMWvAR1AFMMqkB1ruG8/Wallet-Web-Application?node-id=7-4&t=3QxlPXzYEa03AGhI-1',
+      linkLabel: 'Open in Figma',
+    },
+    {
+      tag: 'UX/UI',
+      title: 'Aroya — Consumer Pension App',
+      domain: 'FinTech · Insurance',
+      description: `## Project Overview\n\nAroya is an Israeli fintech startup offering independent pension advisory services directly to citizens — bypassing insurance agents and giving users unbiased guidance on their retirement savings for the first time.\n\nThe company had an existing product: a web-based B2B admin platform used by insurance agencies, built around dense data tables and industry-specific terminology. My task was to design something entirely different — a consumer-facing mobile app that would open a direct B2C channel and make pension management genuinely accessible to people with no financial background.\n\n## My Actions\n\nThe brief I received was vague — reference designs the client liked, an existing desktop UI kit, and a general direction, but none of the foundational decisions had been made yet.\n\nBefore touching a single screen, I realised there were questions that would change everything if answered wrong. So I pushed for alignment upfront, through the PM and Figma comments, rather than making assumptions and designing myself into a corner.\n\nThose questions covered both structure and UI direction — what kind of product this actually was, how it related to the existing platform, and what specifically resonated in the references the client shared. Getting those answers shaped the entire architecture.\n\nI built a mind map with the team to agree on the app structure before wireframes, which meant the first screens I designed were grounded in shared understanding rather than my best guess.\n\n## Result\n\nThe core structure held up throughout the project — even as individual screens and details shifted over several months. The foundational decisions didn't need to be revisited because they'd been made deliberately from the start.\n\n## What I'd Do Differently\n\nTwo things. First, I'd push for direct client access earlier rather than working through a PM — some decisions took longer to resolve than they needed to.\n\nSecond, and more importantly: I'd have proposed a formal sign-off process after every key decision. This client was genuinely well-meaning but easily influenced — a new stakeholder would join, share an opinion, and suddenly everything was back on the table. The structure survived, but it took months of unnecessary back-and-forth to defend decisions that had already been made.\n\nLooking back, the right move would have been to establish a lightweight alignment ritual early on — something as simple as a shared document where agreed decisions were logged and signed off. Not as a legal defence, but as a way to give the client something stable to hold onto when outside opinions started pulling in different directions.`,
+      image: 'https://i.postimg.cc/Wbfrwyzn/Aroya.png',
+      link: 'https://www.figma.com/design/vUDWxSpW96UhkmqlM4O08d/AROYA---MOBILE?node-id=29529-20214&t=ORXfgHu79ivFMEWd-1',
+      linkLabel: 'Open in Figma',
+    },
+    {
+      tag: 'Product UX/UI',
+      title: 'NBS — B2B & B2C E-commerce Platform',
+      domain: 'E-commerce · B2B · B2C',
+      description: `## Project Overview\n\nNBS is a hybrid e-commerce platform built for the ultra-Orthodox community in Israel — an audience where phone-based ordering is still the primary channel, and where simplicity isn't a preference, it's a necessity.\n\nAs the sole product designer, I worked across both the B2B admin panel and the B2C consumer-facing storefront — redesigning existing modules, adding new features to live sections, and building entirely new ones from scratch.\n\nIn this case study, I focus on three of the most complex challenges: redesigning the IVR phone tree configuration, building an email campaign module from zero, and rethinking product category management for non-technical administrators.\n\n## Role & Duration\n\n@@meta Role: Product UX/UI Designer · Duration: 1+ year · On-going project`,
+      image: nbsCover,
+      link: 'https://annandrievska.github.io/case-study/',
+      linkLabel: 'View Case Study',
+      gallery: [
+        [{ src: 'https://i.postimg.cc/QMCd3RKt/View-Mode-18.png', contain: true, caption: 'The IVR phone tree displayed step by step — the admin can walk through the full call flow and check that everything is current and as intended. At this stage of development, we introduced the ability to "build up" the call scenario incrementally alongside the existing clickable step numbers. Previously, verifying transitions was only possible by memorising or writing down node numbers and scrolling through the list to find the next step — with no visual path to follow. Flows ranged from small to very long, and the total number of nodes could exceed 150.' }],
+        [{ src: 'https://i.postimg.cc/HnpKGCjx/Step-2-Step-Type-Transitions-playback-hover-tooltip.png', contain: true, caption: 'Node creation screen for the phone tree — when adding a new step, the admin chooses what to include: an audio recording or a function.' }],
+        [{ src: 'https://i.postimg.cc/zX4jKr5C/Step-2-Step-Type-Transitions-playback-transitions.png', contain: true, caption: 'When an audio recording is selected, the admin can configure the transition behaviour tied to that specific recording. A key pain point in the old system was that admins had to select node numbers blindly — nothing indicated what each step actually meant. Verifying that the transition flow was set up correctly was extremely difficult and error-prone, which caused frequent system failures. End users would experience calls dropping at the same step every time.' }],
+        [{ src: 'https://i.postimg.cc/ry5cvSFG/Step-2-Step-Type-Transitions-function-hover-tooltip.png', contain: true, caption: 'Selecting a function means choosing a system-level action — such as account verification, authentication, and so on. Our solution was to keep these transitions in the background, so the admin isn\'t overwhelmed with complex branching blocks.' }],
+        [{ src: 'https://i.postimg.cc/Yq0CWvxM/Step-3-Transition-Advanced-Settings.png', contain: true, caption: 'After uncovering a recurring pain point at this stage, we decided to pre-fill Advanced Transition Settings with sensible defaults — editable only when truly needed. User feedback revealed that this step was where most people abandoned node creation entirely and contacted support, because they had no idea what to enter, didn\'t understand the technical terminology, and simply didn\'t know what to click. Since these fields were required, the whole process would stop — and everything done up to that point was lost.' }],
+        [{ src: 'https://i.postimg.cc/Jz2mZ2mZ/Communication-menu.png', contain: true, caption: 'The entry point to the entire Mailing module. Three clearly separated cards — Mailing Groups, My Emails, and Templates Library — give users an immediate orientation without visual overload. The design follows a hub-and-spoke model: one central screen routes to three distinct workflows, keeping navigation intentional and reducing cognitive load.' }],
+        [{ src: 'https://i.postimg.cc/TPJ9BZwd/Communication-My-emails-Journal.png', contain: true, caption: 'The operational dashboard for all outgoing communication. Emails are displayed in a scannable table with key performance data inline — click-through rate, open rate, recipient count, and send date — so users can assess campaign health without opening a single email. Status tags (SENT / DRAFT) provide instant context, while filtering and pagination keep large volumes manageable.' }],
+        [{ src: 'https://i.postimg.cc/5yyMkhBM/Specific-Email-SENT-statistic.png', contain: true, caption: 'The post-send management screen. Three tabs — View, Recipients, and Statistics — allow users to switch between reading the email, managing its audience, and analyzing performance. Action buttons for resending and duplicating are always visible, turning a read-only view into an actionable workspace.' }],
+        [{ src: 'https://i.postimg.cc/cLSddbZR/Communication-Mailing-Groups-popup-0.png', contain: true, caption: 'The audience management layer of the module. Each group row displays Emails Sent, Recipient Count, and Last Edit date — the metrics that matter for ongoing campaign planning. A persistent "Send new email" button at the top lets users trigger a send directly from the list, without navigating to an individual group first. Group duplication is available inline, supporting fast iteration on existing audience segments.' }],
+        [{ src: 'https://i.postimg.cc/RFrRYKwc/Specific-Mailing-Group-Tab-2-Recipients-send-new-email.png', contain: true, caption: 'Inside a specific mailing group, users can select which email to send to the group\'s recipients. A preview option is available alongside the selection — so the user can verify they\'ve chosen the right email before confirming the send.' }],
+        [{ src: 'https://i.postimg.cc/5t3dNvGZ/1-2-DEPARTMENTS-List-Search.png', contain: true, caption: 'An expandable category table — users can open each row to see what\'s inside and how many levels deep it goes, making it easy to navigate complex nested structures without losing context.' }],
+        [{ src: 'https://i.postimg.cc/nrx3swD2/1-10-DEPARTMENTS-List-Create-New-Category.png', contain: true, caption: 'Within the departments list, users can create any type of level — a department, a category, or a subcategory — and link it directly to the relevant parent element. Everything is handled in one place, without jumping between screens.' }],
+        [{ src: 'https://i.postimg.cc/yYj78MZ7/CATEGORY-List.png', contain: true, caption: 'Inside a specific department, users can deactivate it and manage its contents — items can be reassigned to other locations without losing data or breaking the structure.' }],
+      ],
+    },
+    {
+      tag: 'UX/UI',
+      title: 'Smart Real Estate Platform',
+      domain: 'Real Estate · PropTech',
+      description: `## Project Overview\n\nThe goal of this project was to design a smart platform for finding and selling real estate. From the very beginning, the client had a clear idea of how they wanted the chat interaction to feel and shared a few reference screens. This meant we had some visual and interaction constraints, but still needed to design the full product logic and user experience from scratch.\n\nWhat makes this platform different is simple: everything happens through chat. Instead of traditional filters, long forms, and dashboards, users talk to the platform. They describe what they're looking for, upload documents if they want to, and the system suggests relevant properties based on their needs.\n\nFor this stage, we worked on MVP. The next phase will focus on enabling the full transaction process directly through chat — which will become the next big challenge for the team.\n\n## The Main Challenge\n\nThe hardest part of the project was figuring out when interest becomes a deal. Since the entire experience lives inside a conversation, the system needs to understand when a user is just browsing, seriously interested, or already negotiating.\n\nAt the same time, users can explore multiple properties at once. They might ask questions about one apartment, switch to another, then come back later and start negotiations with both. Without the right structure, this could easily turn into a messy and confusing experience.\n\nSo the challenge was to keep the chat simple and natural, while still giving users clarity and control over what's happening.\n\n## Our Solution\n\nWe introduced property sub-chats inside one main conversation. This means users can explore as many properties as they want, ask questions, and move forward with negotiations — all without losing context. Each property gets its own mini conversation, but everything still lives inside one main chat, so it stays organized and easy to navigate.\n\nWe also added deal stages and status tracking. The system understands when a user is just exploring and when they move into negotiation or an active deal.\n\nIn the end, the product became a mix of two things: chat drives the experience and actions, while structured panels provide clarity and control. This balance helped keep the experience conversational while still making complex processes like real estate feel manageable.\n\n## Key Features\n\nConversational Deal Creation — users can start buying or selling through chat. The AI assistant collects property details, understands user intent, creates deals automatically, and guides users through next steps.\n\nDocument & Verification System — a smart document hub that shows required vs optional documents, blocks deal progression until mandatory files are uploaded, and adapts requirements based on user role.\n\nNeighborhood & Transport Insights — property listings include structured, editable neighborhood information such as accessibility, education & services, lifestyle and safety, and public transportation with map data.`,
+      image: 'https://i.postimg.cc/bv6H4vNM/Cover.png',
+      link: 'https://www.figma.com/design/FiRlHzrZj9Z6W2qBBf6c4b/RealQ?node-id=0-1&t=O3YWHtPbDV7822RQ-1',
+      linkLabel: 'Open in Figma',
+    },
+    {
+      tag: 'UX/UI',
+      title: 'Startup Projects',
+      domain: 'Fintech · Crypto & Web3 · AI products · HealthTech · SaaS & etc.',
+      description: `## About this file\n\nThis file contains a large collection of concept and pre-seed stage projects, organized into separate folders based on my role: UX Designer, UI Designer, or End-to-end UX/UI Designer.\n\nMost of these projects were created for early-stage startups preparing to present their products to investors. The main goal was not to build full production-ready systems, but to clearly communicate the product vision, core flows, and key features.\n\nBecause of this, the work usually focuses on a small set of high-impact screens (10–15 per project) that demonstrate the idea and the value of the product.\n\nDesign systems and variables were intentionally not developed for these cases, as the priority was speed, clarity, and strong storytelling for pitch decks and fundraising.\n\nThe projects shown here are the ones I'm able to share publicly. A portion of my work remains under NDA — so what you see is a selection, not the full picture.\n\n## Domains covered\n\nFintech · EdTech · HealthTech · AI products · Real Estate · PropTech · SaaS platforms · Marketplaces · E-commerce · Travel & booking · Logistics & delivery · Crypto & Web3 · Food & restaurants · Event platforms · Smart home & IoT · Social platforms · Productivity tools · LegalTech\n\nYou can explore the work organized by my role in each project — whether I was focused purely on UX, handling UI, or leading the full design cycle from research to final screens.`,
+      image: 'https://i.postimg.cc/Bvt1LBJS/Cover.jpg',
+      links: [
+        { label: 'UX Projects',               href: 'https://www.figma.com/design/pmJ7ymzz1JiA50teUjCNdD/UX-%7C-Projects?node-id=284-45932&t=no3WNVVpLh9tKPKO-1' },
+        { label: 'UI Projects',               href: 'https://www.figma.com/design/v1IJ6rXqgOLcc5oamkPG1D/UI-%7C-Projects?node-id=3-18&t=l3KuTAwjkfQdWFoS-1' },
+        { label: 'Full Cycle UX/UI Projects', href: 'https://www.figma.com/design/Qn5DU9lSQdTjtNWYi3Nrly/UX-UI-%7C-Projects?node-id=287-2262&t=XgWKhPUfMCjUF6Tz-1' },
+      ],
+    },
+  ];
+
+  /* ── Dark mode toggle ── */
+  function toggleTheme() {
+    const root = document.documentElement;
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch(e) {}
+  }
+
+  // Restore saved theme on load
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+  } catch(e) {}
+
+  /* ── Hero stacked slideshow ── */
+  (function() {
+    const imgs = [
+      'https://i.postimg.cc/Px23wKhc/28.png',
+      'https://i.postimg.cc/br5XcDHd/35.png',
+      'https://i.postimg.cc/k5vkMhFQ/36.png',
+      'https://i.postimg.cc/P5GcWkSw/37.png',
+      'https://i.postimg.cc/Dydv45gZ/38.png',
+      'https://i.postimg.cc/63rWV0XL/39.png',
+      'https://i.postimg.cc/YCPCt0RF/40.png',
+    ];
+    const front = { el: document.querySelector('.hero-card-front'), idx: 0 };
+
+    function crossfade(card, nextIdx) {
+      const el  = card.el;
+      const img = el.querySelector('.hero-card-img');
+      const next = document.createElement('img');
+      next.className     = 'hero-card-img';
+      next.src           = imgs[nextIdx];
+      next.style.opacity = '0';
+      el.appendChild(next);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          next.style.opacity = '1';
+          img.style.opacity  = '0';
+          setTimeout(() => { if (img.parentNode) img.parentNode.removeChild(img); }, 1500);
+        });
+      });
+      card.idx = nextIdx;
+    }
+
+    setInterval(() => {
+      crossfade(front, (front.idx + 1) % imgs.length);
+    }, 9000);
+  })();
+
+  /* ── Scroll reveal backup via scroll event ── */
+  function checkReveals() {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => {
+      if (el.getBoundingClientRect().top < window.innerHeight - 40) {
+        el.classList.add('visible');
+      }
+    });
+  }
+  window.addEventListener('scroll', checkReveals, { passive: true });
+  // Also check on load for elements already in view
+  checkReveals();
+
+  /* ── Header scroll ── */
+  const header = document.getElementById('site-header');
+  const onScroll = () => {
+    header.classList.toggle('scrolled', window.scrollY > 24);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ── Scroll reveal ── */
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: '0px 0px -60px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Fallback: after 800ms force-show anything still hidden (e.g. already in viewport on load)
+    setTimeout(() => {
+      document.querySelectorAll('.reveal:not(.visible)').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight) el.classList.add('visible');
+      });
+    }, 800);
+  } else {
+    // No IntersectionObserver support — show everything immediately
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  }
+
+  /* ── Modal ── */
+  const overlay = document.getElementById('modal-overlay');
+  const modal   = document.getElementById('modal');
+
+  function openModal(idx) {
+    const p = projects[idx];
+    document.getElementById('modal-img').src            = p.image;
+    document.getElementById('modal-img').alt            = p.title;
+    document.getElementById('modal-title').textContent  = p.title;
+    document.getElementById('modal-tag').textContent    = p.tag;
+    document.getElementById('modal-domain').textContent = p.domain;
+
+    const figmaIcon = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0"><path d="M5.5 2A1.5 1.5 0 0 0 4 3.5v1A1.5 1.5 0 0 0 5.5 6H7V2H5.5zM7 6H5.5A1.5 1.5 0 0 0 4 7.5v1A1.5 1.5 0 0 0 5.5 10H7V6zM7 10H5.5A1.5 1.5 0 0 0 4 11.5v1A1.5 1.5 0 0 0 5.5 14H7v-4zM8 2v4h1.5A1.5 1.5 0 0 0 11 4.5v-1A1.5 1.5 0 0 0 9.5 2H8zM8 6v4a2 2 0 1 0 0-4z"/></svg>';
+    const arrowIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>';
+
+    const btnsContainer = document.getElementById('modal-footer-buttons');
+    btnsContainer.innerHTML = '';
+
+    if (p.links) {
+      document.getElementById('modal-footer-hint').textContent = 'Explore by role';
+      p.links.forEach(item => {
+        const a = document.createElement('a');
+        a.className = 'btn-figma';
+        a.href = item.href;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.style.cssText = 'font-size:.8125rem; padding:9px 16px;';
+        a.innerHTML = figmaIcon + '<span style="margin-left:6px">' + item.label + '</span>';
+        btnsContainer.appendChild(a);
+      });
+    } else {
+      const isCaseStudy = p.linkLabel === 'View Case Study';
+      document.getElementById('modal-footer-hint').textContent = isCaseStudy ? 'Read the full case study' : 'View the full design file';
+      const a = document.createElement('a');
+      a.className = 'btn-figma';
+      a.href = p.link || '#';
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.innerHTML = (isCaseStudy ? arrowIcon : figmaIcon) + '<span style="margin-left:8px">' + (p.linkLabel || 'Open in Figma') + '</span>';
+      btnsContainer.appendChild(a);
+    }
+    document.getElementById('modal-scroll-area').scrollTop = 0;
+
+    const desc = document.getElementById('modal-description');
+    desc.innerHTML = p.description
+      ? p.description.split('\n\n').map(t => {
+          if (t.startsWith('## ')) return `<h3>${t.slice(3)}</h3>`;
+          if (t.startsWith('@@meta ')) {
+            return `<div class="modal-meta-row">${t.slice(7).split(' · ').map(item => `<span class="modal-meta-chip">${item}</span>`).join('')}</div>`;
+          }
+          return `<p>${t}</p>`;
+        }).join('')
+      : '<p style="color:var(--text-muted);font-style:italic;">Full case study description coming soon.</p>';
+
+    // Gallery
+    const existingGallery = document.getElementById('modal-gallery');
+    if (existingGallery) existingGallery.remove();
+
+    if (p.gallery && p.gallery.length) {
+      const galleryEl = document.createElement('div');
+      galleryEl.className = 'modal-gallery';
+      galleryEl.id = 'modal-gallery';
+      p.gallery.forEach(row => {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'modal-gallery-row';
+        row.forEach(entry => {
+          const src     = entry && typeof entry === 'object' ? entry.src     : entry;
+          const contain = entry && typeof entry === 'object' ? entry.contain : false;
+          const caption = entry && typeof entry === 'object' ? entry.caption : null;
+          const item = document.createElement('div');
+          item.className = 'modal-gallery-item' + (src ? '' : ' skeleton') + (contain ? ' contain' : '');
+          item.style.position = 'relative';
+          if (src) {
+            const img = document.createElement('img');
+            img.src = src;
+            img.loading = 'lazy';
+            item.appendChild(img);
+          }
+          if (caption) {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-gallery-caption';
+            overlay.innerHTML = '<p>' + caption + '</p>';
+            item.appendChild(overlay);
+          }
+          rowEl.appendChild(item);
+        });
+        galleryEl.appendChild(rowEl);
+      });
+      document.getElementById('modal-scroll-area').appendChild(galleryEl);
+    }
+
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.project-card:not(.project-card-skeleton)').forEach(card => {
+    card.addEventListener('click', () => openModal(+card.dataset.project));
+  });
+
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  /* ── Gallery hover: smart transform-origin to avoid edge clipping ── */
+  document.querySelectorAll('.gallery-item').forEach(item => {
+    item.addEventListener('mouseenter', () => {
+      const rect = item.getBoundingClientRect();
+      const vw = window.innerWidth;
+      const scale = 1.7;
+      const scaledW = rect.width * scale;
+      const cx = rect.left + rect.width / 2;
+
+      // Would the scaled item overflow left or right?
+      const wouldOverflowLeft  = (cx - scaledW / 2) < 0;
+      const wouldOverflowRight = (cx + scaledW / 2) > vw;
+
+      // Also account for items already partially off-screen
+      const partiallyOffLeft  = rect.left < 0;
+      const partiallyOffRight = rect.right > vw;
+
+      let originX = 'center';
+      if (partiallyOffLeft  || wouldOverflowLeft)  originX = 'left';
+      if (partiallyOffRight || wouldOverflowRight) originX = 'right';
+
+      item.style.transformOrigin = `${originX} center`;
+    });
+  });
+</script>
+</body>
+</html>
