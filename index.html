@@ -193,13 +193,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 100%;
       height: 420px;
     }
 
     .hero-card-stack {
       position: relative;
-      width: 380px;
-      height: 380px;
+      width: min(380px, 100%);
+      aspect-ratio: 1 / 1;
       animation: heroCardFloat 5s ease-in-out infinite;
     }
     @keyframes heroCardFloat {
@@ -970,15 +971,35 @@
       header { padding: 0 24px; }
       nav { display: none; }
       #hero { padding: 100px 24px 80px; }
-      .hero-grid { grid-template-columns: 1fr; gap: 40px; }
-      .hero-visual { height: 280px; }
+      .hero-grid { display: flex; flex-direction: column; gap: 40px; }
+      /* Reorder: headline + text first, then image, then buttons */
+      .hero-left { display: contents; }
+      .hero-eyebrow  { order: 1; }
+      .hero-headline { order: 2; }
+      .hero-sub      { order: 3; }
+      .hero-visual   { order: 4; height: auto; }
+      .hero-actions  { order: 5; margin-top: 0; }
       .about-grid { grid-template-columns: 1fr; gap: 48px; }
-      .projects-grid { grid-template-columns: repeat(2, 1fr); }
       .work-header { flex-direction: column; align-items: flex-start; gap: 24px; }
       .modal-scroll-area { padding: 24px; }
       footer { flex-direction: column; gap: 8px; text-align: center; }
       .modal-overlay { padding: 16px; }
       .modal-footer { padding: 16px 24px; }
+    }
+
+    /* ── Tablet: project cards two in a row ── */
+    @media (min-width: 577px) and (max-width: 1024px) {
+      .projects-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── Mobile: project cards stacked one under another ── */
+    @media (max-width: 576px) {
+      .projects-grid { grid-template-columns: 1fr; }
+
+      /* Hero buttons: full-width within the safe zone, stacked */
+      .hero-actions { flex-direction: column; width: 100%; }
+      .hero-actions .btn-primary,
+      .hero-actions .btn-secondary { width: 100%; justify-content: center; }
     }
   </style>
 </head>
